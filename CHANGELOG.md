@@ -3,10 +3,15 @@
 All changes verified live against ZIMRA's FDMS test environment on device 37367
 unless noted.
 
-## Unreleased
+## 0.4.1 — 2026-09-29
 
 ### Fixed
 
+- The receipt signing string now includes each tax's `taxCode`, as FDMS API
+  spec v7.2 section 13.2.1 requires. Without it, FDMS rejected any receipt
+  whose taxes carry a code with RCPT020. Taxes with the same `taxID` and
+  rate but different codes now stay separate. Thanks to @okandas (#3).
+  Checked against the spec's Example No 1, not yet live.
 - Receipt taxes with the same `taxID` now sort by Unicode code point.
   Plain string comparison used UTF-16 units, which put U+1F600 before
   U+E000. Tested locally, not live.
