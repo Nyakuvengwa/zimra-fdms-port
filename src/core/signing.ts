@@ -45,9 +45,23 @@ export function fdmsDate(d: Date = new Date()): string {
  */
 export function compareReceiptTaxes(a: ReceiptTax, b: ReceiptTax): number {
   if (a.taxID !== b.taxID) return a.taxID - b.taxID;
-  const ca = a.taxCode ?? "";
-  const cb = b.taxCode ?? "";
-  return ca < cb ? -1 : ca > cb ? 1 : 0;
+  return compareCodePoints(a.taxCode ?? "", b.taxCode ?? "");
+}
+
+/**
+ * String order by Unicode code point. Plain `<` compares UTF-16 units, which
+ * puts astral characters such as "😀" before U+E000..U+FFFF.
+ */
+function compareCodePoints(a: string, b: string): number {
+  const ia = a[Symbol.iterator]();
+  const ib = b[Symbol.iterator]();
+  for (;;) {
+    const x = ia.next();
+    const y = ib.next();
+    if (x.done || y.done) return x.done === y.done ? 0 : x.done ? -1 : 1;
+    const d = x.value.codePointAt(0)! - y.value.codePointAt(0)!;
+    if (d !== 0) return d;
+  }
 }
 
 /**

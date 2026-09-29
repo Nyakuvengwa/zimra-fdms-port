@@ -3,7 +3,19 @@
 All changes verified live against ZIMRA's FDMS test environment on device 37367
 unless noted.
 
-## 0.4.0 — unreleased
+## Unreleased
+
+### Fixed
+
+- Receipt taxes with the same `taxID` now sort by Unicode code point.
+  Plain string comparison used UTF-16 units, which put U+1F600 before
+  U+E000. Tested locally, not live.
+- `zimra-fdms submit` reads a receipt file saved with a byte-order mark.
+  Windows PowerShell 5.1 writes one when you redirect `submit --sample` to a
+  file, and the next `submit` failed with a JSON error. Tested locally, not
+  live.
+
+## 0.4.0 — 2026-09-06
 
 The core now runs anywhere. This is the first step of the 1.0 plan: no
 fiscal behaviour changes, and 0.3.x code keeps working.

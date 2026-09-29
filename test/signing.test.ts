@@ -103,6 +103,15 @@ describe("concatenateReceiptTaxes", () => {
     ]);
     assert.equal(s, "15.00100100" + "B15.00100100" + "a15.00100100" + "Ä15.00100100");
   });
+
+  it("orders astral taxCodes by code point, not UTF-16 unit", () => {
+    // "😀" is U+1F600 but its first UTF-16 unit (0xD83D) is below U+E000.
+    const s = concatenateReceiptTaxes([
+      { taxID: 1, taxCode: "😀", taxPercent: 15, taxAmount: 1, salesAmountWithTax: 1 },
+      { taxID: 1, taxCode: "\uE000", taxPercent: 15, taxAmount: 1, salesAmountWithTax: 1 },
+    ]);
+    assert.equal(s, "\uE00015.00100100" + "😀15.00100100");
+  });
 });
 
 describe("receiptSigningString", () => {
